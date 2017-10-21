@@ -1,0 +1,41 @@
+entity Category {
+	name String
+    description String
+}
+
+relationship ManyToMany {
+	Product{categories} to Category{products}
+}
+
+entity Product {
+	name String
+    description String
+    price BigDecimal
+}
+
+relationship OneToMany {
+	Product{images} to Image{product}
+}
+
+entity Image {
+	name String
+    description String
+    image Blob
+}
+
+relationship ManyToMany {
+	Product{tags} to Tag{products}
+}
+
+entity Tag {
+	name String
+}
+
+paginate Product, Category, Tag, Image with infinite-scroll
+
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl except Product, Category, Tag, Image
+// Set an angular suffix
+angularSuffix * with me_catalog
