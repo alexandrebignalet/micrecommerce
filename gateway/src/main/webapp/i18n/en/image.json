@@ -1,0 +1,28 @@
+{
+    "gatewayApp": {
+        "image" : {
+            "home": {
+                "title": "Images",
+                "createLabel": "Create a new Image",
+                "createOrEditLabel": "Create or edit a Image",
+                "search": "Search for Image"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Image {{ id }}?"
+            },
+            "detail": {
+                "title": "Image"
+            },
+            "name": "Name",
+            "description": "Description",
+            "file": "File"
+        }
+    },
+    "catalogApp": {
+        "image" : {
+            "created": "A new Image is created with identifier {{ param }}",
+            "updated": "A Image is updated with identifier {{ param }}",
+            "deleted": "A Image is deleted with identifier {{ param }}"
+        }
+    }
+}
