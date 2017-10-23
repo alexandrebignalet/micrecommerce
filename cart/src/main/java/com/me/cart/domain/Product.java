@@ -2,6 +2,7 @@ package com.me.cart.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Product implements Serializable {
@@ -15,6 +16,11 @@ public class Product implements Serializable {
     private byte[] image;
 
     private String fileContentType;
+
+    public Product id(String id) {
+        this.id = id;
+        return this;
+    }
 
     public String getId() {
         return id;
@@ -84,15 +90,19 @@ public class Product implements Serializable {
             return false;
         }
         Product product = (Product) o;
-        if (product.getId() == null || getId() == null) {
+        if (product.getId() == null || getId() == null || product.getName() == null || getName() == null
+            || product.getFileContentType() == null || getFileContentType() == null ||
+            product.getImage() == null || getImage() == null || product.getPrice() == null || getPrice() == null) {
             return false;
         }
-        return Objects.equals(getId(), product.getId());
+        return Objects.equals(getId(), product.getId()) && Objects.equals(getName(), product.getName())
+            && Objects.equals(getPrice(), product.getPrice()) && Arrays.equals(getImage(), product.getImage())
+            && Objects.equals(getFileContentType(), product.getFileContentType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(getId()+getPrice()+getName()+getFileContentType());
     }
 
     @Override
