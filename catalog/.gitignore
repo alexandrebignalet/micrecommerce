@@ -1,5 +1,7 @@
 ######################
 # Project Specific
+.idea/
+
 ######################
 /target/www/**
 /src/test/javascript/coverage/

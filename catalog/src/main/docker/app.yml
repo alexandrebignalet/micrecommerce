@@ -15,12 +15,6 @@ services:
         extends:
             file: mongodb.yml
             service: catalog-mongodb
-    kafka:
-        extends:
-            file: kafka.yml
-            service: kafka
-        environment:
-            - KAFKA_ADVERTISED_HOST_NAME=kafka
     zookeeper:
         extends:
             file: kafka.yml

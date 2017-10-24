@@ -104,6 +104,8 @@ public class ProductDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", price='" + getPrice() + "'" +
+            ", image='" + getImage().length + "'" +
+            ", fileContentType='" + getFileContentType() + "'" +
             "}";
     }
 }

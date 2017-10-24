@@ -36,6 +36,11 @@ public class Product implements Serializable {
     private BigDecimal price;
 
     @NotNull
+    @Min(value = 0L)
+    @Field("stock")
+    private Long stock;
+
+    @NotNull
     @Size(min=1)
     @Field("categories")
     private Set<Category> categories = new HashSet<>();
@@ -43,6 +48,10 @@ public class Product implements Serializable {
 
     @Field("tag")
     private Set<Tag> tags = new HashSet<>();
+
+    @NotNull
+    @Field("mainImageId")
+    private String mainImageId;
 
     @NotNull
     @Size(min=1)
@@ -95,6 +104,19 @@ public class Product implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public Product stock(Long stock) {
+        this.stock = stock;
+        return this;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -194,9 +216,21 @@ public class Product implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", price='" + getPrice() + "'" +
-            ", categories= '" + getCategories().toString() + "'" +
-            ", tags= '" + getTags().toString() + "'" +
-            ", images= '" + getImages().toString() + "'" +
+            ", stock='" + getStock() + "'" +
+            ", mainImageId='" + getMainImageId() + "'" +
             "}";
+    }
+
+    public String getMainImageId() {
+        return mainImageId;
+    }
+
+    public Product mainImageId(String imageId) {
+        this.mainImageId = imageId;
+        return this;
+    }
+
+    public void setMainImageId(String imageId) {
+        this.mainImageId = imageId;
     }
 }

@@ -37,8 +37,8 @@ public class CartItemDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "ProductDTO{" +
-            ", quantity='" + getQuantity() + "'" +
+        return "CartItemDTO {" +
+            "quantity='" + getQuantity() + "'" +
             ", product='" + getProduct() + "'" +
             "}";
     }
