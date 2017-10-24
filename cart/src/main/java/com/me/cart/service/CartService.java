@@ -56,7 +56,6 @@ public class CartService {
 
     public Cart getCurrentUserCart() {
         this.sessionKeyName = SecurityUtils.getCurrentUserLogin() + CART;
-
         Cart currentCart = cartMap.get(sessionKeyName);
 
         if(currentCart != null) return currentCart;
