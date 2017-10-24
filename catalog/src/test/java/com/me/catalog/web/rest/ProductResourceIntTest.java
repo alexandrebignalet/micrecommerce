@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -55,11 +54,18 @@ public class ProductResourceIntTest {
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0);
     private static final BigDecimal UPDATED_PRICE = new BigDecimal(1);
 
+    private static final Long DEFAULT_STOCK = 0L;
+    private static final Long UPDATED_STOCK = 1L;
+
     private static final Set<Category> DEFAULT_CATEGORIES = new HashSet<>(Arrays.asList(CategoryResourceIntTest.createEntity(), CategoryResourceIntTest.createEntity()));
 
     private static final Set<Tag> DEFAULT_TAGS = new HashSet<>(Arrays.asList(TagResourceIntTest.createEntity(), TagResourceIntTest.createEntity()));
 
     private static final Set<Image> DEFAULT_IMAGES = new HashSet<>(Arrays.asList(ImageResourceIntTest.createEntity(), ImageResourceIntTest.createEntity()));
+
+    private static final String DEFAULT_MAIN_IMAGE_ID = "toto";
+    private static final String UPDATED_MAIN_IMAGE_ID = "tata";
+
 
     @Autowired
     private ProductRepository productRepository;
@@ -100,13 +106,14 @@ public class ProductResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Product createEntity() {
-
         Product product = new Product()
             .name(DEFAULT_NAME)
             .description(DEFAULT_DESCRIPTION)
             .price(DEFAULT_PRICE)
+            .stock(DEFAULT_STOCK)
             .categories(DEFAULT_CATEGORIES)
             .tags(DEFAULT_TAGS)
+            .mainImageId(DEFAULT_MAIN_IMAGE_ID)
             .images(DEFAULT_IMAGES);
 
         return product;
@@ -116,7 +123,6 @@ public class ProductResourceIntTest {
     public void initTest() {
         productRepository.deleteAll();
         product = createEntity();
-        System.out.println("coucou " + product);
     }
 
     @Test
@@ -125,7 +131,6 @@ public class ProductResourceIntTest {
 
         // Create the Product
         ProductDTO productDTO = productMapper.toDto(product);
-        System.out.println("bonjour DTO, " + productDTO);
         restProductMockMvc.perform(post("/api/products")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
@@ -138,6 +143,8 @@ public class ProductResourceIntTest {
         assertThat(testProduct.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testProduct.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testProduct.getPrice()).isEqualTo(DEFAULT_PRICE);
+        assertThat(testProduct.getStock()).isEqualTo(DEFAULT_STOCK);
+        assertThat(testProduct.getMainImageId()).isEqualTo(DEFAULT_MAIN_IMAGE_ID);
     }
 
     @Test
@@ -178,6 +185,24 @@ public class ProductResourceIntTest {
     }
 
     @Test
+    public void checkMainImageIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = productRepository.findAll().size();
+        // set the field null
+        product.setMainImageId(null);
+
+        // Create the Product, which fails.
+        ProductDTO productDTO = productMapper.toDto(product);
+
+        restProductMockMvc.perform(post("/api/products")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(productDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Product> productList = productRepository.findAll();
+        assertThat(productList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void checkDescriptionIsRequired() throws Exception {
         int databaseSizeBeforeTest = productRepository.findAll().size();
         // set the field null
@@ -200,6 +225,24 @@ public class ProductResourceIntTest {
         int databaseSizeBeforeTest = productRepository.findAll().size();
         // set the field null
         product.setPrice(null);
+
+        // Create the Product, which fails.
+        ProductDTO productDTO = productMapper.toDto(product);
+
+        restProductMockMvc.perform(post("/api/products")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(productDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Product> productList = productRepository.findAll();
+        assertThat(productList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void checkStockIsRequired() throws Exception {
+        int databaseSizeBeforeTest = productRepository.findAll().size();
+        // set the field null
+        product.setStock(null);
 
         // Create the Product, which fails.
         ProductDTO productDTO = productMapper.toDto(product);
@@ -261,7 +304,9 @@ public class ProductResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(product.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.intValue())));
+            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.intValue())))
+            .andExpect(jsonPath("$.[*].stock").value(hasItem(DEFAULT_STOCK.intValue())))
+            .andExpect(jsonPath("$.[*].mainImageId").value(hasItem(DEFAULT_MAIN_IMAGE_ID.toString())));
     }
 
     @Test
@@ -276,7 +321,9 @@ public class ProductResourceIntTest {
             .andExpect(jsonPath("$.id").value(product.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.intValue()));
+            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.intValue()))
+            .andExpect(jsonPath("$.stock").value(DEFAULT_STOCK.intValue()))
+            .andExpect(jsonPath("$.mainImageId").value(DEFAULT_MAIN_IMAGE_ID.toString()));
     }
 
     @Test
@@ -297,7 +344,9 @@ public class ProductResourceIntTest {
         updatedProduct
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
-            .price(UPDATED_PRICE);
+            .price(UPDATED_PRICE)
+            .stock(UPDATED_STOCK)
+            .mainImageId(UPDATED_MAIN_IMAGE_ID);
         ProductDTO productDTO = productMapper.toDto(updatedProduct);
 
         restProductMockMvc.perform(put("/api/products")
@@ -312,6 +361,8 @@ public class ProductResourceIntTest {
         assertThat(testProduct.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testProduct.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testProduct.getPrice()).isEqualTo(UPDATED_PRICE);
+        assertThat(testProduct.getStock()).isEqualTo(UPDATED_STOCK);
+        assertThat(testProduct.getMainImageId()).isEqualTo(UPDATED_MAIN_IMAGE_ID);
     }
 
     @Test

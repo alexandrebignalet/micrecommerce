@@ -1,6 +1,8 @@
 package com.me.catalog.service.dto;
 
 
+import com.me.catalog.domain.Image;
+
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,6 +30,10 @@ public class ProductDTO implements Serializable {
     private BigDecimal price;
 
     @NotNull
+    @Min(value = 0L)
+    private Long stock;
+
+    @NotNull
     @Size(min=1)
     private Set<CategoryDTO> categories = new HashSet<>();
 
@@ -37,6 +43,8 @@ public class ProductDTO implements Serializable {
     @Size(min=1)
     private Set<ImageDTO> images = new HashSet<>();
 
+    @NotNull
+    private String mainImageId;
 
     public String getId() {
         return id;
@@ -68,6 +76,14 @@ public class ProductDTO implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
     }
 
     public Set<CategoryDTO> getCategories() {
@@ -122,6 +138,16 @@ public class ProductDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", price='" + getPrice() + "'" +
+            ", stock='" + getStock() + "'" +
+            ", mainImageId='" + getMainImageId() + "'" +
             "}";
+    }
+
+    public String getMainImageId() {
+        return mainImageId;
+    }
+
+    public void setMainImageId(String id) {
+        this.mainImageId = id;
     }
 }
